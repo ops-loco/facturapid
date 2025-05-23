@@ -1,0 +1,126 @@
+# Prompt para manus.ai - Proyecto Facturapid
+
+## Contexto del proyecto
+
+Facturapid es un sistema que permite a los clientes de un restaurante descargar sus facturas en PDF rellenando sus datos fiscales. El sistema debe integrarse con una aplicación de TPV existente (TpvFacil) en un entorno Windows 7, automatizando la generación de códigos QR para facturas y facilitando su descarga desde un frontend web.
+
+## Componentes del sistema
+
+### 1. Sincronizador en Go (Backend)
+
+Desarrolla un servicio en Go que:
+
+- Se ejecute como servicio en Windows 7 con mínimas dependencias del sistema operativo
+- Conecte con una base de datos Microsoft Access (.mdb) ubicada en "c:\tpv\tpv.mdb" protegida con la contraseña "mcdqn"
+- Monitoree la tabla "Factura" para detectar nuevas facturas con Cliente1="QR" y Impresa="S"
+- Cuando encuentre una factura que cumpla las condiciones:
+  - Extraiga todos los datos de la factura de la tabla "Factura"
+  - Obtenga las líneas correspondientes de la tabla "FacturasLin" usando el campo "CodigoFactura"
+  - Envíe estos datos a una API REST en el backend
+  - Genere un código QR con el enlace al frontend donde el cliente podrá introducir sus datos fiscales
+  - Imprima el código QR en la impresora de tickets Epson TM-T88 conectada al puerto LPT1
+
+#### Consideraciones técnicas para el sincronizador:
+- Usa la librería adecuada para conectar con bases de datos Access desde Go
+- Implementa un mecanismo para detectar nuevas facturas (polling o eventos del sistema)
+- Utiliza una librería para generar códigos QR en Go
+- Implementa comunicación con impresoras de tickets Epson usando el protocolo adecuado
+- Crea un instalador o script que facilite la instalación como servicio de Windows
+
+### 2. API REST (Backend)
+
+Desarrolla una API REST que:
+
+- Reciba los datos de las facturas enviados por el sincronizador
+- Almacene estos datos en una base de datos (preferiblemente PostgreSQL o MySQL)
+- Proporcione endpoints para:
+  - Guardar datos de facturas
+  - Obtener datos de una factura específica por ID
+  - Actualizar una factura con los datos fiscales proporcionados por el cliente
+  - Generar un PDF de la factura con todos los datos completos
+
+#### Consideraciones técnicas para la API:
+- Implementa autenticación segura entre el sincronizador y la API
+- Utiliza un framework REST eficiente (como Echo, Gin o Fiber para Go)
+- Diseña un esquema de base de datos optimizado para almacenar las facturas y sus líneas
+- Implementa validación de datos y manejo de errores robusto
+
+### 3. Frontend en React
+
+Desarrolla una aplicación web en React que:
+
+- Se aloje en un servidor Plesk
+- Proporcione una interfaz para que los clientes:
+  - Accedan a través del código QR escaneado
+  - Visualicen los datos de su factura
+  - Completen sus datos fiscales (nombre, dirección, NIF/CIF, etc.)
+  - Descarguen la factura en formato PDF una vez completados los datos
+
+#### Consideraciones técnicas para el frontend:
+- Diseño responsivo para funcionar en dispositivos móviles
+- Implementa validación de formularios del lado del cliente
+- Usa React Router para la navegación
+- Implementa un sistema de gestión de estado (Context API, Redux, etc.)
+- Asegura que la interfaz sea intuitiva y fácil de usar
+
+## Estructura de datos
+
+### Tabla Factura (ejemplo de campos importantes):
+```
+Codigo: Identificador único de la factura (ej: 40296)
+Cliente1: Campo que identifica al cliente (buscamos "QR")
+Impresa: Indica si la factura ha sido impresa (buscamos "S")
+Total: Importe total de la factura
+Fecha: Fecha de emisión
+Hora: Hora de emisión
+Base1, Base2, Base3: Bases imponibles
+Iva1, Iva2, Iva3: Porcentajes de IVA
+CuotaIva1, CuotaIva2, CuotaIva3: Importes de IVA
+```
+
+### Tabla FacturasLin (ejemplo de campos importantes):
+```
+CodigoFactura: Relaciona con la tabla Factura
+Producto: Descripción del producto
+Unidades: Cantidad
+Subtotal: Importe
+IvaAplicado: Porcentaje de IVA aplicado
+```
+
+## Flujo del sistema
+
+1. Cliente solicita factura en el establecimiento
+2. El personal marca el cliente como "QR" en el TPV
+3. Se genera la factura y se marca como impresa
+4. El sincronizador detecta la nueva factura y envía los datos al backend
+5. Se genera un código QR con enlace único y se imprime
+6. El cliente escanea el QR con su móvil
+7. El cliente completa sus datos fiscales en el frontend
+8. El cliente descarga la factura en PDF con todos los datos completos
+
+## Requisitos de seguridad
+
+- Implementar comunicación HTTPS en todos los componentes
+- Validar y sanitizar todas las entradas de usuario
+- Implementar mecanismos de prevención de ataques comunes (XSS, CSRF, inyección SQL)
+- Generar enlaces únicos y seguros para cada factura
+
+## Entregables esperados
+
+1. Código fuente del sincronizador en Go
+2. Código fuente de la API REST
+3. Código fuente del frontend en React
+4. Documentación técnica de cada componente
+5. Manual de instalación y configuración
+6. Instrucciones para el despliegue en el servidor Plesk
+
+## Plazos y prioridades
+
+Definir plazos realistas para cada fase del desarrollo, comenzando por el sincronizador que es el componente crítico para la integración con el sistema existente.
+
+## Información adicional
+
+- El sistema debe ser lo más automático posible, minimizando la intervención del personal
+- La solución debe ser escalable para adaptarse a un mayor volumen de facturas
+- Priorizar la estabilidad y robustez del sistema en el entorno Windows 7
+- Considerar posibles limitaciones de conectividad y rendimiento en el entorno de producción
