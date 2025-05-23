@@ -2,7 +2,11 @@ module facturapid-api
 
 go 1.21 // Or a recent Go version
 
-require github.com/gin-gonic/gin v1.9.1
+require (
+	github.com/gin-gonic/gin v1.9.1
+	github.com/jung-kurt/gofpdf v1.16.2 // PDF generation library
+	github.com/lib/pq v1.10.9          // PostgreSQL driver
+)
 
 require (
 	github.com/bytedance/sonic v1.10.1 // indirect
