@@ -1,4 +1,4 @@
-# FactuRapid
+# FactuRapid -
 
 ## Contexto del proyecto
 
