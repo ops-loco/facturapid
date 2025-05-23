@@ -140,9 +140,8 @@ The password is: mcetlqsm
 Filename: C:\Tpv\profile.mdb
 The password is: mcdqn
 
-
+-----------------------
 Aquí hay un ejemplo de la tabla factura:
-
 
 Codigo	Cuenta	Fecha	Hora	Total	TipoCobro	Vendedor	CuotaIVA	Abonado	Terminal	Traspasada	Tarifa	Base1	Base2	Base3	Iva1	Iva2	Iva3	CuotaIva1	CuotaIva2	CuotaIva3	Serie	Cliente1	Cliente2	Cliente3	Cliente4	Revisable	Impresa	CobroMixto	EfectivoMixto	TipoCobroMixto	TipoCobroMixto2	Comensales	CodigoDeFactura	FechaDeFactura	HoraDeFactura	CobroMixto2	Base4	Base5	Base6	Iva4	Iva5	Iva6	CuotaIva4	CuotaIva5	CuotaIva6
 40296	BAR1	07/03/2006	15:34:06	17,05 €	_EFECTIVO	_ADMIN	1,12 €	17,05 €	Term1	N	_NORMAL	15,93 €			7,00 €			1,12 €			A	QR	AVDA VILA DE TOSSA 56	17310 LLORET DE MAR	GIRONA	N	S																		
